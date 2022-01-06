@@ -10,7 +10,21 @@ function sort(array) {
   // call snapshot any time you do anything to the array
   // it's okay if you call it with duplicate value array,
   // it will deduplicate for you
-  snapshot(array);
+  let swapped = true;
+  while (swapped) {
+    swapped = false;
+    for (let j = 1; j < array.length; j++) {
+      let shouldSwap = array[j + 1] < array[j];
+      if (shouldSwap) {
+        const temp = array[j + 1];
+        array[j + 1] = array[j];
+        array[j] = temp;
+        swapped = true;
+      }
+      snapshot(array);
+    }
+  }
+  return array;
 }
 
 export default function SortComponent() {

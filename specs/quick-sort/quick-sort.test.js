@@ -13,12 +13,35 @@
 */
 
 function quickSort(nums) {
-  // code goes here
+  // get pivot
+  // split into left and right arrays based on pivot comparison
+  // call quick sort on left and right
+  // concat the result with the pivot
+  //
+  if (nums.length < 2) {
+    // already sorted
+    return nums;
+  }
+
+  const pivot = nums[nums.length - 1];
+  let left = [];
+  let right = [];
+  // console.log("pivot", pivot);
+  for (let i = 0; i < nums.length - 1; i++) {
+    if (nums[i] <= pivot) {
+      left.push(nums[i]);
+    } else {
+      right.push(nums[i]);
+    }
+  }
+  // console.log("right", right);
+  // console.log("left", left);
+  return [...quickSort(left), pivot, ...quickSort(right)];
 }
 
 // unit tests
 // do not modify the below code
-test.skip("quickSort", function () {
+test("quickSort", function () {
   const input = [10, 8, 2, 1, 6, 3, 9, 4, 7, 5];
   const answer = quickSort(input);
 
