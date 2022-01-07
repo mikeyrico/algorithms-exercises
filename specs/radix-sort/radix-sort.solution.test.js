@@ -32,8 +32,21 @@ function radixSort(array) {
   const buckets = new Array(10).fill().map(() => []); // make an array of 10 arrays
 
   for (let i = longestNumber - 1; i >= 0; i--) {
+    // for (let i = 0; i < longestNumber; i++) { // does not appear to work in either direction, sort from higher radix
+    // console.log('i', i)
     while (array.length) {
       const current = array.shift();
+      const digit = getDigit(current, i, longestNumber);
+      // console.log('current', current)
+      // console.log('digit', digit)
+      console.log(
+        [
+          `current: ${current}`,
+          `i: ${i}`,
+          `longestNumber: ${longestNumber}`,
+          `digit: ${digit}`,
+        ].join("\n")
+      );
       buckets[getDigit(current, i, longestNumber)].push(current);
     }
 
@@ -52,51 +65,13 @@ function radixSort(array) {
 describe("radix sort", function () {
   it("should sort correctly", () => {
     const nums = [
-      20,
-      51,
-      3,
-      801,
-      415,
-      62,
-      4,
-      17,
-      19,
-      11,
-      1,
-      100,
-      1244,
-      104,
-      944,
-      854,
-      34,
-      3000,
-      3001,
-      1200,
-      633
+      20, 51, 3, 801, 415, 62, 4, 17, 19, 11, 1, 100, 1244, 104, 944, 854, 34,
+      3000, 3001, 1200, 633,
     ];
     const ans = radixSort(nums);
     expect(ans).toEqual([
-      1,
-      3,
-      4,
-      11,
-      17,
-      19,
-      20,
-      34,
-      51,
-      62,
-      100,
-      104,
-      415,
-      633,
-      801,
-      854,
-      944,
-      1200,
-      1244,
-      3000,
-      3001
+      1, 3, 4, 11, 17, 19, 20, 34, 51, 62, 100, 104, 415, 633, 801, 854, 944,
+      1200, 1244, 3000, 3001,
     ]);
   });
   it("should sort 99 random numbers correctly", () => {
