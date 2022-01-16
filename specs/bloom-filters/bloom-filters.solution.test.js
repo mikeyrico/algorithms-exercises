@@ -59,7 +59,7 @@ describe("BloomFilter", function () {
       "Sean",
       "Jessie",
       "Paige",
-      "Ashley"
+      "Ashley",
     ];
     names.forEach((item) => bf.add(item));
     names.forEach((item) => expect(bf.contains(item)).toBe(true));

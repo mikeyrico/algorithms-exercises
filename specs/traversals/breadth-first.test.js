@@ -1,10 +1,29 @@
 const breadthFirstTraverse = (queue, array) => {
-  // fill code in here
+  // recursive
+  // if (!queue.length) return array;
+  // const nextQueue = [];
+  // for (let i = 0; i < queue.length; i++) {
+  //   const target = queue[i];
+  //   array.push(target.value);
+  //   target.left && nextQueue.push(target.left);
+  //   target.right && nextQueue.push(target.right);
+  // }
+  // return breadthFirstTraverse(nextQueue, array);
+
+  // iterative solution
+  let q = queue;
+  while (q.length) {
+    const target = q.shift();
+    array.push(target.value);
+    target.left && q.push(target.left);
+    target.right && q.push(target.right);
+  }
+  return array;
 };
 
 // unit tests
 // do not modify the below code
-describe.skip("breadth-first tree traversal", function () {
+describe("breadth-first tree traversal", function () {
   const answer = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
 
   const tree = {
@@ -16,9 +35,9 @@ describe.skip("breadth-first tree traversal", function () {
         left: {
           value: "G",
           left: null,
-          right: null
+          right: null,
         },
-        right: null
+        right: null,
       },
       right: {
         value: "E",
@@ -28,10 +47,10 @@ describe.skip("breadth-first tree traversal", function () {
           left: {
             value: "K",
             left: null,
-            right: null
-          }
-        }
-      }
+            right: null,
+          },
+        },
+      },
     },
     right: {
       value: "C",
@@ -40,16 +59,16 @@ describe.skip("breadth-first tree traversal", function () {
         left: {
           value: "I",
           left: null,
-          right: null
+          right: null,
         },
         right: {
           value: "J",
           left: null,
-          right: null
-        }
+          right: null,
+        },
       },
-      right: null
-    }
+      right: null,
+    },
   };
 
   test("breadthFirstTraverse", () => {

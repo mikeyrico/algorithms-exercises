@@ -97,6 +97,8 @@ class Node {
       this.rotateRR();
     }
   }
+  // this appear to be mislabeled
+  // use this in conjuction with https://visualgo.net/en/bst to right correct version
   rotateRR() {
     const valueBefore = this.value;
     const leftBefore = this.left;
@@ -126,7 +128,7 @@ class Node {
       this.height = 1;
     } else if (
       !this.right ||
-      (this.left && this.right.height < this.left.height)
+      (this.left && this.right.height < this.left.height) // take the larger side and add 1
     ) {
       this.height = this.left.height + 1;
     } else {

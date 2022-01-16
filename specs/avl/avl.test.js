@@ -22,16 +22,52 @@
 */
 
 class Tree {
-  // code goes here
+  constructor(value) {
+    this.value = value;
+  }
+  add(value) {
+    if (!this.value) {
+      this.value = new Node(value);
+    } else {
+      this.value.add(value);
+    }
+  }
+  toObject() {
+    return this;
+  }
+
+  toJSON() {
+    return JSON.stringify(this, 4, null);
+  }
 }
 
 class Node {
-  // code also goes here
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+    this.height = 0;
+  }
+
+  add(value) {
+    const direction = value < this.value ? "left" : "right";
+    this.place(value, direction);
+    this.balance();
+    // this.height  only increases when node no longer a leaf
+  }
+
+  place(value, direction) {
+    if (!this[direction]) {
+      this[direction] = new Node(value);
+    } else {
+      this[direction].add(value);
+    }
+  }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("AVL Tree", function () {
+describe("AVL Tree", function () {
   test("creates a correct tree", () => {
     const nums = [3, 7, 4, 6, 5, 1, 10, 2, 9, 8];
     const tree = new Tree();

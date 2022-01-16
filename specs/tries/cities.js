@@ -923,5 +923,5 @@ module.exports.CITY_NAMES = [
   "Keizer",
   "Spanish Fork",
   "Beloit",
-  "Panama City"
+  "Panama City",
 ];

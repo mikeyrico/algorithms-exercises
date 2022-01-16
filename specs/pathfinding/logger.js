@@ -11,7 +11,9 @@ const NO_ONE = 0;
 const BY_A = 1;
 
 module.exports = function logMaze(maze) {
-  console.log("================");
+  let toLog = [];
+  // console.log("================");
+  toLog.push("================");
   let header = "XX | ";
   let subheader = "-----";
   for (let i = 0; i < maze[0].length; i++) {
@@ -19,8 +21,8 @@ module.exports = function logMaze(maze) {
     header += `${num} `;
     subheader += "---";
   }
-  console.log(header);
-  console.log(subheader);
+  toLog.push(header);
+  toLog.push(subheader);
   maze.forEach((row, i) => {
     const num = i >= 10 ? i : "0" + i;
     let buffer = `${num} | `;
@@ -28,18 +30,20 @@ module.exports = function logMaze(maze) {
 
     row.forEach((item) => {
       if (item.closed) {
-        buffer += "%cXX ";
+        buffer += "XX ";
         colors.push("color: gray");
       } else if (item.openedBy === NO_ONE) {
-        buffer += "%c•• ";
+        buffer += "•• ";
         colors.push("color: lightgray");
       } else {
-        buffer +=
-          "%c" + (item.length >= 10 ? item.length : "0" + item.length) + " ";
+        buffer += (item.length >= 10 ? item.length : "0" + item.length) + " ";
         colors.push(item.openedBy === BY_A ? "color: lime" : "color: hotpink");
       }
     });
 
-    console.log(buffer, ...colors);
+    // console.log(buffer, ...colors);
+    toLog = [...toLog, buffer];
+    // console.log(buffer, ...colors);
   });
+  console.log(toLog.join("\n", null, 4));
 };

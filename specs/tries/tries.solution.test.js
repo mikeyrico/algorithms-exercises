@@ -118,7 +118,7 @@ describe("tries", function () {
         "new orleans",
         "new haven",
         "newark",
-        "newport news"
+        "newport news",
       ]).length
     ).toBe(3);
   });
@@ -176,7 +176,7 @@ describe("tries", function () {
         "santee",
         "sandy",
         "sandy springs",
-        "sanford"
+        "sanford",
       ]).length
     ).toBe(3);
   });
@@ -185,6 +185,7 @@ describe("tries", function () {
 describe("edge cases", () => {
   test("handle whole words – seattle", () => {
     const root = createTrie(CITY_NAMES.slice(0, 30));
+    // console.log(JSON.stringify(root, null, 4));
     const completions = root.complete("seattle");
     expect(completions.length).toBe(1);
     expect(_.intersection(completions, ["seattle"]).length).toBe(1);
@@ -198,6 +199,7 @@ describe("edge cases", () => {
 
   test("handle words that are a subset of another string – salin", () => {
     const root = createTrie(CITY_NAMES.slice(0, 800));
+    debugger;
     const completions = root.complete("salin");
     expect(completions.length).toBe(2);
     expect(_.intersection(completions, ["salina", "salinas"]).length).toBe(2);

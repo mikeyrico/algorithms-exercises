@@ -12,36 +12,50 @@ const h3 = (string) =>
 // fill out these two methods
 // `add` adds a string to the bloom filter and returns void (nothing, undefined)
 // `contains` takes a string and tells you if a string is maybe in the bloom filter
+
+// rico: important to understand the `contains` test, to tell if an item is maybe in the filter then all hashes must be 1
 class BloomFilter {
-  // you'll probably need some instance variables
+  constructor() {
+    this._array = new Array(100).fill(0);
+  }
   add(string) {
-    // code here
+    this.updateFilter(this.hashes(string));
   }
   contains(string) {
-    // code here
+    return this.hashes(string).reduce((acc, hash) => {
+      return acc && this._array[hash] === 1;
+    }, true);
+  }
+  updateFilter(hashes) {
+    hashes.forEach((hash) => {
+      this._array[hash] = 1;
+    });
+  }
+  hashes(string) {
+    return [h1(string), h2(string), h3(string)];
   }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("BloomFilter", function () {
+describe("BloomFilter", function () {
   let bf;
   beforeEach(() => {
     bf = new BloomFilter();
   });
-  test.skip("returns false when empty", () => {
+  test("returns false when empty", () => {
     expect(bf.contains("Brian")).toBe(false);
     expect(bf.contains("Sarah")).toBe(false);
     expect(bf.contains("Simona")).toBe(false);
   });
-  test.skip("handles one item", () => {
+  test("handles one item", () => {
     expect(bf.contains("Brian")).toBe(false);
     bf.add("Brian");
     expect(bf.contains("Brian")).toBe(true);
     expect(bf.contains("Sarah")).toBe(false);
     expect(bf.contains("Simona")).toBe(false);
   });
-  test.skip("handles many items", () => {
+  test("handles many items", () => {
     const names = [
       "Brian",
       "Simona",
@@ -51,7 +65,7 @@ describe.skip("BloomFilter", function () {
       "Sean",
       "Jessie",
       "Paige",
-      "Ashley"
+      "Ashley",
     ];
     names.forEach((item) => bf.add(item));
     names.forEach((item) => expect(bf.contains(item)).toBe(true));

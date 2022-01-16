@@ -36,9 +36,9 @@ describe("breadth-first tree traversal", function () {
         left: {
           value: "G",
           left: null,
-          right: null
+          right: null,
         },
-        right: null
+        right: null,
       },
       right: {
         value: "E",
@@ -48,10 +48,10 @@ describe("breadth-first tree traversal", function () {
           left: {
             value: "K",
             left: null,
-            right: null
-          }
-        }
-      }
+            right: null,
+          },
+        },
+      },
     },
     right: {
       value: "C",
@@ -60,16 +60,16 @@ describe("breadth-first tree traversal", function () {
         left: {
           value: "I",
           left: null,
-          right: null
+          right: null,
         },
         right: {
           value: "J",
           left: null,
-          right: null
-        }
+          right: null,
+        },
       },
-      right: null
-    }
+      right: null,
+    },
   };
 
   test("breadthFirstTraverse", () => {

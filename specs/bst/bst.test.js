@@ -17,7 +17,70 @@ right - Node/object - the right node which itself may be another tree
 */
 
 class Tree {
-  // code goes here
+  constructor(val) {
+    this.value = val;
+    this.left = null;
+    this.right = null;
+  }
+  add(val) {
+    if (!this.value) {
+      this.value = val;
+    } else if (val <= this.value) {
+      if (!this.left) {
+        this.left = new Tree(val);
+      } else {
+        this.left.add(val);
+      }
+    } else {
+      if (!this.right) {
+        this.right = new Tree(val);
+      } else {
+        this.right.add(val);
+      }
+    }
+  }
+
+  delete(val) {
+    const target = this.find(val);
+    if (target) {
+      const leastRightChild = this.findLeastRightChild(target);
+      if (!leastRightChild) {
+        return;
+      }
+      target.value = leastRightChild.value;
+      target.right.left = leastRightChild.right;
+    }
+  }
+
+  findLeastRightChild(tree) {
+    let elt = tree.right;
+    if (!elt) {
+      return;
+    }
+    while (elt.left) {
+      elt = elt.left;
+    }
+    return elt;
+  }
+
+  find = (value) => {
+    if (this.value === value) {
+      return this;
+    }
+    if (this.value > value && this.left) {
+      return this.left.find(value);
+    } else if (this.value <= value && this.right) {
+      return this.right.find(value);
+    }
+  };
+
+  // test(search, value) {
+  //   return search === value;
+  // }
+
+  toObject = () => {
+    return this;
+  };
 }
 
 // you might consider using a Node class too
@@ -27,7 +90,7 @@ class Tree {
 
 // unit tests
 // do not modify the below code
-describe.skip("Binary Search Tree", function () {
+describe("Binary Search Tree", function () {
   it("creates a correct tree", () => {
     const nums = [3, 7, 4, 6, 5, 1, 10, 2, 9, 8];
     const tree = new Tree();
@@ -64,4 +127,47 @@ describe.skip("Binary Search Tree", function () {
     expect(objs.right.right.left.left.right).toBeNull();
     expect(objs.right.right.left.left.left).toBeNull();
   });
+
+  it("creates correct trees", () => {
+    const nums = [10, 5, 15, 8, 6, 3, 7, 17, 12];
+    const tree = new Tree();
+    nums.map((num) => tree.add(num));
+    const objs = tree.toObject();
+    // render(objs, nums);
+
+    expect(objs.value).toEqual(10);
+
+    expect(objs.left.value).toEqual(5);
+    expect(objs.left.left.value).toEqual(3);
+
+    expect(objs.left.right.value).toEqual(8);
+    expect(objs.left.right.left.value).toEqual(6);
+    expect(objs.left.right.left.right.value).toEqual(7);
+
+    expect(objs.right.value).toEqual(15);
+    expect(objs.right.left.value).toEqual(12);
+    expect(objs.right.right.value).toEqual(17);
+    expect(objs.right.right.right).toBeNull();
+    expect(objs.right.right.left).toBeNull();
+  });
+
+  it("deletes values from the tree", function () {
+    const nums = [10, 5, 15, 8, 6, 3, 7, 17, 12];
+    const tree = new Tree();
+    nums.map((num) => tree.add(num));
+    const objs = tree.toObject();
+
+    const resultNums = [10, 6, 15, 3, 8, 7, 12, 17];
+    const resultTree = new Tree();
+    resultNums.map((num) => resultTree.add(num));
+    const resultObjs = resultTree.toObject();
+    tree.delete(5);
+    const output = JSON.stringify(objs, null, 4);
+    const expected = JSON.stringify(resultObjs);
+    // console.log("output", output);
+    expect(output).toEqual(expected);
+  });
+
+  // TODO add cases for leaf node deletion or a target without a right
+  // - appear to be handled in the code
 });

@@ -13,19 +13,26 @@ const { CITY_NAMES } = require("./cities.js");
 const _ = require("lodash"); // needed for unit tests
 
 class Node {
+  constructor(value) {
+    this.value = value;
+    this.children = [];
+  }
   // you don't have to use this data structure, this is just how I did it
   // you'll almost definitely need more methods than this and a constructor
   // and instance variables
   complete(string) {
     return [];
   }
+  add(string) {}
 }
 
 const createTrie = (words) => {
   // you do not have to do it this way; this is just how I did it
   const root = new Node("");
 
-  // more code should go here
+  words.forEach((word) => {
+    root.add(word.toLowerCase());
+  });
 
   return root;
 };
@@ -69,7 +76,7 @@ describe.skip("tries", function () {
         "new orleans",
         "new haven",
         "newark",
-        "newport news"
+        "newport news",
       ]).length
     ).toBe(3);
   });
@@ -127,7 +134,7 @@ describe.skip("tries", function () {
         "santee",
         "sandy",
         "sandy springs",
-        "sanford"
+        "sanford",
       ]).length
     ).toBe(3);
   });
