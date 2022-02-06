@@ -10,80 +10,139 @@ Here you'll make a BST. Your Tree class will have keep track of a root which wil
 to your tree. From there, if the item is less than the value of that node, it will go into its left subtree
 and if greater it will go to the right subtree.
 
-In order for this to work and for the unit tests to pass you, you must implement a Tree .toObject function that returns
-your tree as a series of nested objects. Those nested objects must use the following names for their properties
-
 value - integer     - value being contained in the node
 left  - Node/object - the left node which itself may be another tree
 right - Node/object - the right node which itself may be another tree
 
-Extra credit: implement delete
-
 */
 
 class Tree {
-  constructor() {
-    this.root = null;
-  }
-  add(value) {
-    if (this.root === null) {
-      this.root = new Node(value);
-    } else {
-      let current = this.root;
-      while (true) {
-        if (current.value > value) {
-          // go left
-
-          if (current.left) {
-            current = current.left;
-          } else {
-            current.left = new Node(value);
-            break;
-          }
-        } else {
-          // go right
-          if (current.right) {
-            current = current.right;
-          } else {
-            current.right = new Node(value);
-            break;
-          }
-        }
-      }
-    }
-    return this;
-  }
-  toJSON() {
-    return JSON.stringify(this.root.serialize(), null, 4);
+  // helper to create trees
+  static create(nums) {
+    const tree = new Tree()
+    nums.forEach(num => tree.add(num))
+    return tree
   }
   toObject() {
-    return this.root.serialize();
+    return this
+  }
+  constructor(value, parent) {
+    this.value = value
+    this.left = null
+    this.right = null
+    this.parent = parent
+  }
+  add(value) {
+    if (!this.value) {
+      this.value = value
+      return
+    }
+    if (value > this.value) {
+      if (!this.right) {
+        this.right = new Tree(value, this)
+      } else {
+        this.right.add(value)
+      }
+    } else {
+      if (!this.left) {
+        this.left = new Tree(value, this)
+      } else {
+        this.left.add(value)
+      }
+    }
+  }
+  find(value) {
+    if (this.value === value) {
+      return this
+    }
+
+    if (this.right && value > this.value ) {
+      return this.right.find(value)
+    } else if (this.left && value <= this.value ) {
+      return this.left.find(value)
+    }
+
+    return -1 // not found
+  }
+  findMin() {
+    let min = this
+    while (min.left) {
+      min = min.left
+    }
+    return min
+  }
+  findMax() {
+    let max = this
+    while (max.right) {
+      max = max.right
+    }
+    return max
+  }
+  successor() {
+    if (this.right) {
+      return this.right.findMin()
+    }
+    let parent = this.parent
+    let current = this
+    while (parent && parent.right === current) {
+      current = parent
+      parent = current.parent
+    }
+    return parent ? parent : -1
+  }
+  predecessor() {
+    if (this.left) {
+      return this.left.findMax()
+    }
+    let parent = this.parent
+    let current = this
+    while (parent && parent.left === current) {
+      current = parent
+      parent = current.parent
+    }
+    return parent ? parent : -1
+  }
+  delete(value) {
+    const target = this.find(value)
+
+    if (!target) return
+
+    const childCount = [this.right, this.left].filter(i => i).length
+    if (childCount < 2) {
+      if (target.value > target.parent.value) {
+        target.parent.right = null
+      } else {
+        target.parent.left = null
+      }
+    }
+
+    const leastRightChild = target.successor()
+    target.value = leastRightChild.value
+
+    if (!leastRightChild.right) {
+      if (leastRightChild.parent.value < leastRightChild.value) {
+        leastRightChild.parent.right = null
+      } else {
+        leastRightChild.parent.left = null
+      }
+    } else {
+      leastRightChild.value = leastRightChild.right.value
+      leastRightChild.right = null
+    }
   }
 }
 
-class Node {
-  constructor(value = null, left = null, right = null) {
-    this.left = left;
-    this.right = right;
-    this.value = value;
-  }
-  serialize() {
-    const ans = { value: this.value };
-    ans.left = this.left === null ? null : this.left.serialize();
-    ans.right = this.right === null ? null : this.right.serialize();
-    return ans;
-  }
-}
+// you might consider using a Node class too
+// class Node {
+//   // code maybe goes here
+// }
 
 // unit tests
 // do not modify the below code
 describe("Binary Search Tree", function () {
   it("creates a correct tree", () => {
-    const nums = [3, 7, 4, 6, 5, 1, 10, 2, 9, 8];
-    const tree = new Tree();
-    nums.map((num) => tree.add(num));
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
     const objs = tree.toObject();
-    // render(objs, nums);
 
     expect(objs.value).toEqual(3);
 
@@ -113,5 +172,109 @@ describe("Binary Search Tree", function () {
     expect(objs.right.right.left.left.value).toEqual(8);
     expect(objs.right.right.left.left.right).toBeNull();
     expect(objs.right.right.left.left.left).toBeNull();
+  });
+
+  it("should find the node if it exists in the tree", () => {
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
+    expect(tree.find(11)).toBe(-1);
+
+    const seven = tree.find(7).toObject();
+    expect(seven.left.value).toEqual(4);
+    expect(seven.left.left).toBeNull();
+
+    expect(seven.left.right.value).toEqual(6);
+    expect(seven.left.right.left.value).toEqual(5);
+    expect(seven.left.right.left.right).toBeNull();
+    expect(seven.left.right.left.left).toBeNull();
+
+    expect(seven.right.value).toEqual(10);
+    expect(seven.right.right).toBeNull();
+
+    expect(seven.right.left.value).toEqual(9);
+    expect(seven.right.left.right).toBeNull();
+
+    expect(seven.right.left.left.value).toEqual(8);
+    expect(seven.right.left.left.right).toBeNull();
+    expect(seven.right.left.left.left).toBeNull();
+  });
+
+  it("should return -1 an element cannot be found in a tree", () => {
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
+    expect(tree.find(11)).toBe(-1);
+  });
+
+  it("should find the min and max values in the tree", () => {
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
+    expect(tree.findMin().value).toBe(1);
+    expect(tree.findMax().value).toBe(10);
+  });
+
+  it("should find the successor for a given node", () => {
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
+    expect(tree.find(10).successor()).toBe(-1);
+
+    expect(tree.find(5).successor().value).toBe(6);
+    expect(tree.find(2).successor().value).toBe(3);
+    expect(tree.find(4).successor().value).toBe(5);
+  });
+
+  it("should find the predecessor for a given node", () => {
+    const tree = Tree.create([3, 7, 4, 6, 5, 1, 10, 2, 9, 8]);
+    expect(tree.find(1).predecessor()).toBe(-1);
+    expect(tree.find(10).predecessor().value).toBe(9);
+    expect(tree.find(5).predecessor().value).toBe(4);
+    expect(tree.find(2).predecessor().value).toBe(1);
+    expect(tree.find(4).predecessor().value).toBe(3);
+  });
+
+  it("creates correct trees", () => {
+    const tree = Tree.create([10, 5, 15, 8, 6, 3, 7, 17, 12]);
+    const objs = tree.toObject();
+    // render(objs, nums);
+
+    expect(objs.value).toEqual(10);
+
+    expect(objs.left.value).toEqual(5);
+    expect(objs.left.left.value).toEqual(3);
+
+    expect(objs.left.right.value).toEqual(8);
+    expect(objs.left.right.left.value).toEqual(6);
+    expect(objs.left.right.left.right.value).toEqual(7);
+
+    expect(objs.right.value).toEqual(15);
+    expect(objs.right.left.value).toEqual(12);
+    expect(objs.right.right.value).toEqual(17);
+    expect(objs.right.right.right).toBeNull();
+    expect(objs.right.right.left).toBeNull();
+  });
+
+  it("deletes values from the tree", function () {
+    const nums = [10, 5, 15, 8, 6, 3, 7, 17, 12];
+    const tree = new Tree();
+    nums.map((num) => tree.add(num));
+    const objs = tree.toObject();
+
+    const resultNums = [10, 6, 15, 3, 8, 7, 12, 17];
+    const resultTree = new Tree();
+    resultNums.map((num) => resultTree.add(num));
+    const resultObjs = resultTree.toObject();
+    tree.delete(5);
+    // console.log("output", output);
+    expect(objs).toEqual(resultObjs);
+  });
+
+  it("deletes nested values from the tree", function () {
+    const nums = [24, 12, 18, 6, 3, 21, 15, 13, 48];
+    const tree = new Tree();
+    nums.map((num) => tree.add(num));
+    const objs = tree.toObject();
+
+    const resultNums = [24, 13, 6, 3, 18, 15, 21, 48];
+    const resultTree = new Tree();
+    resultNums.map((num) => resultTree.add(num));
+    const resultObjs = resultTree.toObject();
+    tree.delete(12);
+    // console.log("output", output);
+    expect(objs).toEqual(resultObjs);
   });
 });
